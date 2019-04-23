@@ -12,6 +12,7 @@
         <module>registry</module>
         <module>api-gateway</module>
         <module>item</module>
+        <module>common</module>
     </modules>
 
     <parent>
