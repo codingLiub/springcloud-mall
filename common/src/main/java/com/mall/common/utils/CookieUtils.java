@@ -122,7 +122,7 @@ public final class CookieUtils {
      * 设置Cookie的值，并使其在指定时间内生效
      *
      * @param cookieMaxAge
-     *            cookie生效的最大秒数
+     * cookie生效的最大秒数
      */
     public static final void setCookie(HttpServletRequest request, HttpServletResponse response, String cookieName, String cookieValue, Integer cookieMaxAge, String encodeString, Boolean httpOnly) {
         try {
@@ -139,7 +139,8 @@ public final class CookieUtils {
             if (cookieMaxAge != null && cookieMaxAge > 0) {
                 cookie.setMaxAge(cookieMaxAge);
             }
-            if (null != request)// 设置域名的cookie
+            // 设置域名的cookie
+            if (null != request)
             {
                 cookie.setDomain(getDomainName(request));
             }
