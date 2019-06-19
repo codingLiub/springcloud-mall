@@ -1,4 +1,4 @@
-package com.mall.gateway.config;
+package com.mall.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,11 +18,10 @@ public class GlobalCorsConfig {
     public CorsFilter corsFilter() {
         //1.添加CORS配置信息
         CorsConfiguration config = new CorsConfiguration();
+
         //1) 允许的域,不要写*，否则cookie就无法使用了
-        config.addAllowedOrigin("http://www.mall.com");
         config.addAllowedOrigin("http://manage.mall.com");
-        config.addAllowedOrigin("http://api.mall.com");
-        config.addAllowedOrigin("http://image.mall.com");
+        config.addAllowedOrigin("http://www.mall.com");
         //2) 是否发送Cookie信息
         config.setAllowCredentials(true);
         //3) 允许的请求方式
@@ -33,10 +32,8 @@ public class GlobalCorsConfig {
         config.addAllowedMethod("POST");
         config.addAllowedMethod("DELETE");
         config.addAllowedMethod("PATCH");
-        //4）允许的头信息
+        // 4）允许的头信息
         config.addAllowedHeader("*");
-        //5）有效时长
-        config.setMaxAge(3600L);
 
         //2.添加映射路径，我们拦截一切请求
         UrlBasedCorsConfigurationSource configSource = new UrlBasedCorsConfigurationSource();

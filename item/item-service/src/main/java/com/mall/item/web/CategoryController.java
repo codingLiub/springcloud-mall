@@ -3,11 +3,9 @@ package com.mall.item.web;
 import com.mall.item.pojo.Category;
 import com.mall.item.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,16 +28,64 @@ public class CategoryController {
      */
     @GetMapping("/list")
     public ResponseEntity<List<Category>> queryCategoryListByPid(@RequestParam("pid") Long pid) {
-        return ResponseEntity.ok(categoryService.queryCategoryListByPid(pid));
+        //如果pid的值为-1那么需要获取数据库中最后一条数据
+        if(pid == -1){
+            List<Category> last=this.categoryService.queryLast();
+            return ResponseEntity.ok(last);
+        }else {
+            List<Category> list=this.categoryService.queryCategoryByPid(pid);
+            if (list == null){
+                //没有找到返回404
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+            //找到返回200
+            return ResponseEntity.ok(list);
+        }
+
     }
 
     /**
-     * 根据id查询商品分类
-     * @param ids
+     * 保存
+     * @param category
+     */
+    @PostMapping
+    public ResponseEntity<Void> saveCategory(Category category){
+        System.out.println(category);
+        this.categoryService.saveCategory(category);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * 用于修改品牌信息时，商品分类信息的回显
+     * @param bid
      * @return
      */
-    @GetMapping("list/ids")
-    public ResponseEntity<List<Category>> queryCategoryListByids(@RequestParam("ids") List<Long> ids) {
-        return ResponseEntity.ok(categoryService.queryByIds(ids));
+    @GetMapping("bid/{bid}")
+    public ResponseEntity<List<Category>> queryByBrandId(@PathVariable("bid") Long bid){
+        List<Category> list = this.categoryService.queryByBrandId(bid);
+        if(list == null || list.size() < 1){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(list);
+    }
+
+    /**
+     * 更新
+     * @return
+     */
+    @PutMapping
+    public ResponseEntity<Void> updateCategory(Category category){
+        this.categoryService.updateCategory(category);
+        return  ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    }
+
+    /**
+     * 删除
+     * @return
+     */
+    @DeleteMapping("cid/{cid}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable("cid") Long id){
+        this.categoryService.deleteCategory(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

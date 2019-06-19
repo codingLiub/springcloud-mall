@@ -1,95 +1,50 @@
 package com.mall.item.service;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-import com.mall.common.enums.ExceptionEnum;
-import com.mall.common.exception.MallException;
-import com.mall.common.vo.PageResult;
-import com.mall.item.mapper.BrandMapper;
+import com.mall.common.pojo.PageResult;
 import com.mall.item.pojo.Brand;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-import tk.mybatis.mapper.entity.Example;
-import org.apache.commons.lang3.StringUtils;
+import com.mall.parameter.pojo.BrandQueryByPageParameter;
 
 import java.util.List;
 
 /**
  * @ Author     ：Bin Liu
  * @ Date       ：2019/4/24 16:00
- * @ Description：${description}
+ * @ Description：品牌的业务层接口
  * @ Modified By：
  */
-@Service
-public class BrandService {
-    @Autowired
-    private BrandMapper brandMapper;
 
-    public PageResult<Brand> queryBrandByPageAndSort(Integer page, Integer rows, String sortBy, Boolean desc, String key) {
-        // 开始分页
-        PageHelper.startPage(page, rows);
-        // 过滤
-        Example example = new Example(Brand.class);
-        if (StringUtils.isNotBlank(key)) {
-            example.createCriteria().andLike("name", "%" + key + "%")
-                    .orEqualTo("letter", key);
-        }
-        if (StringUtils.isNotBlank(sortBy)) {
-            // 排序
-            String orderByClause = sortBy + (desc ? " DESC" : " ASC");
-            example.setOrderByClause(orderByClause);
-        }
-        // 查询
-        Page<Brand> pageInfo = (Page<Brand>) brandMapper.selectByExample(example);
-        // 返回结果
-        return new PageResult<>(pageInfo.getTotal(), pageInfo);
-    }
+public interface BrandService {
+    /**
+     * 分页查询
+     * @param brandQueryByPageParameter
+     * @return
+     */
+    PageResult<Brand> queryBrandByPageAndSort(BrandQueryByPageParameter brandQueryByPageParameter);
 
-    // 添加事务
-    @Transactional
-    public void saveBrand(Brand brand, List<Long> cids) {
+    /**
+     * 新增brand,并且维护中间表
+     * @param brand
+     * @param categories
+     */
+    void saveBrand(Brand brand, List<Long> categories);
 
-        brand.setId(null);
-        int count = brandMapper.insert(brand);
-        if (count != 1) {
-            throw new MallException(ExceptionEnum.BRAND_SAVE_ERROR);
-        }
+    /**
+     * 删除brand，并且维护中间表
+     * @param id
+     */
+    void deleteBrand(long id);
 
-        // 新增中间表
-        for (Long cid : cids) {
-            // 新增brand，brand的id会自动回写
-            int count1 = brandMapper.insertCategoryBrand(cid, brand.getId());
-            if (count1 != 1) {
-                throw new MallException(ExceptionEnum.CATEGORY_NOT_FOUND);
-            }
-        }
-    }
+    /**
+     * 根据category id查询brand
+     * @param cid
+     * @return
+     */
+    List<Brand> queryBrandByCategoryId(Long cid);
 
-
-    public Brand queryById(Long id) {
-        Brand brand = brandMapper.selectByPrimaryKey(id);
-        if (brand == null) {
-            throw new MallException(ExceptionEnum.BRAND_NOT_FOUND);
-        }
-        return brand;
-    }
-
-    public List<Brand> queryBrandByCid(Long cid) {
-        List<Brand> list = brandMapper.queryByCategoryId(cid);
-        if (CollectionUtils.isEmpty(list)) {
-            throw new MallException(ExceptionEnum.BRAND_NOT_FOUND);
-        }
-        return list;
-
-    }
-
-    public List<Brand> queryBrandByIds(List<Long> ids) {
-        List<Brand> list = brandMapper.selectByIdList(ids);
-        if (CollectionUtils.isEmpty(list)) {
-            throw new MallException(ExceptionEnum.BRAND_NOT_FOUND);
-        }
-        return list;
-    }
+    /**
+     * 根据品牌id集合查询品牌信息
+     * @param ids
+     * @return
+     */
+    List<Brand> queryBrandByBrandIds(List<Long> ids);
 }

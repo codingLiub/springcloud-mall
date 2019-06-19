@@ -1,7 +1,6 @@
 package com.mall.upload.service;
 
 import com.mall.common.enums.ExceptionEnum;
-import com.mall.common.exception.MallException;
 import com.mall.upload.web.UploadController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

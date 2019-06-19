@@ -1,4 +1,4 @@
-package com.mall.common.utils;
+package com.mall.utils;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
