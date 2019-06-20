@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import tk.mybatis.mapper.additional.idlist.IdListMapper;
+import tk.mybatis.mapper.additional.idlist.SelectByIdListMapper;
 import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
  * @ Modified By：
  */
 @org.apache.ibatis.annotations.Mapper
-public interface CategoryMapper extends Mapper<Category>,IdListMapper<Category,Long> {
+public interface CategoryMapper extends Mapper<Category>, SelectByIdListMapper<Category,Long> {
 
     /**
      * 根据category id删除中间表相关数据
@@ -39,4 +40,12 @@ public interface CategoryMapper extends Mapper<Category>,IdListMapper<Category,L
      */
     @Select("SELECT * FROM tb_category WHERE id IN (SELECT category_id FROM tb_category_brand WHERE brand_id = #{bid})")
     List<Category> queryByBrandId(Long bid);
+
+    /**
+     * 根据id查名字
+     * @param id
+     * @return
+     */
+    @Select("SELECT name FROM tb_category WHERE id = #{id}")
+    String queryNameById(Long id);
 }

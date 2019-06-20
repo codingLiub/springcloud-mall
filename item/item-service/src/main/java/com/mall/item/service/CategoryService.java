@@ -49,4 +49,11 @@ public interface CategoryService {
      * @return
      */
     List<Category> queryByBrandId(Long bid);
+
+    /**
+     * 根据ids查询名字
+     * @param asList
+     * @return
+     */
+    List<String> queryNameByIds(List<Long> asList);
 }
