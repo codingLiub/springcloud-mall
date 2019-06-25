@@ -14,6 +14,7 @@
         <module>item</module>
         <module>common</module>
         <module>upload</module>
+        <module>search</module>
     </modules>
 
     <parent>

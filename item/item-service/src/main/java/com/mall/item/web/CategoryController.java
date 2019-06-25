@@ -88,4 +88,19 @@ public class CategoryController {
         this.categoryService.deleteCategory(id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    /**
+     * 根据分类id集合查询分类名称
+     * @param ids
+     * @return
+     */
+    @GetMapping("names")
+    public ResponseEntity<List<String>> queryNameByIds(@RequestParam("ids")List<Long> ids){
+        List<String> list = categoryService.queryNameByIds(ids);
+        if (list == null || list.size() < 1){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }else {
+            return ResponseEntity.ok(list);
+        }
+    }
 }
